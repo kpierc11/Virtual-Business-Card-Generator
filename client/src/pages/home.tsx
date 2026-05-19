@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import Card from "../../components/Card";
+import Card from "../components/Card";
 
 export default function Home() {
   const [formData, setFormData] = useState({

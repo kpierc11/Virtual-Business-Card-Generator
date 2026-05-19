@@ -1,4 +1,4 @@
-import imgUrl from '../src/assets/placeholder.webp'
+import imgUrl from "../assets/placeholder.webp"
 
 
 interface Card {

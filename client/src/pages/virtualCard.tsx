@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import Card from "../../components/Card";
+import Card from "../components/Card";
 
 export default function VirtualCard() {
   let { id } = useParams();
