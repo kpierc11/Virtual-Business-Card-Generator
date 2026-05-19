@@ -1,4 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans+Flex:opsz,wght@6..144,1..1000&display=swap');
 @import "tailwindcss";
+
 @plugin "daisyui" {
-  themes: emerald --default, dark --prefersdark, night ;
+  themes: emerald --default, dark --prefersdark, night;
+}
+
+@plugin "daisyui/theme" {
+  name: "emerald";
+  default: true;
+
+  --color-secondary: #6585af;
+  --color-secondary-content: #ffffff;
+}
+
+html,
+body {
+  font-family: "Google Sans Flex", sans-serif;
+  height: 100%;
 }
