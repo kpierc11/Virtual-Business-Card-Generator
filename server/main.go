@@ -24,6 +24,7 @@ type CardData struct {
 	WebsiteLink            string `json:"websiteLink"`
 	CompanyName            string `json:"companyName"`
 	JobTitle               string `json:"jobTitle"`
+	AboutDescription       string `json:"aboutDescription"`
 	PreviewBackgroundImage string `json:"previewBackgroundImage"`
 	PreviewImage           string `json:"previewImage"`
 }
