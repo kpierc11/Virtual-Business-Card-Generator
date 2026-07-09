@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for server-white-sun-9414 on 2026-04-04T16:32:50-04:00
+# fly.toml app configuration file generated for server-white-sun-9414 on 2026-07-09T06:21:18Z
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -7,8 +7,6 @@ app = 'server-white-sun-9414'
 primary_region = 'iad'
 
 [build]
-  [build.args]
-    GO_VERSION = '1.25.6'
 
 [env]
   PORT = '8080'
