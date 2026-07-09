@@ -56,7 +56,6 @@ export default function VirtualCard() {
       `TITLE:${formData.jobTitle}`,
       `TEL;TYPE=CELL:${formData.phone}`,
       `EMAIL:${formData.email}`,
-      "ADR;TYPE=HOME:;;123 Main St;Bristol;VA;24201;USA",
       `URL:${formData.websiteLink}`,
       "BDAY:19900101",
       "NOTE:Met at tech conference",
