@@ -11,7 +11,7 @@ interface Card {
   jobTitle: string;
   previewBackgroundImage?: string;
   previewImage?: string;
-  handleVcfDownload?: () => void;
+  handleVcfDownload?: (event:any) => void;
   showPhoneBackground?: false;
 }
 

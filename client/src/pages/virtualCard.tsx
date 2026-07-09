@@ -84,7 +84,7 @@ export default function VirtualCard() {
       jobTitle={formData.jobTitle}
       previewBackgroundImage={formData.previewBackgroundImage}
       previewImage={formData.previewImage}
-      handleVcfDownload={() => handleVcfDownload}
+      handleVcfDownload={handleVcfDownload}
     ></Card>
   );
 }
