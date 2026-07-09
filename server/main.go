@@ -133,5 +133,5 @@ func main() {
 	router.POST("/add-card", addNewVirtualCard)
 	router.POST("/get-card", getVirtualCard)
 
-	router.Run()
+	router.Run("[::]:8080")
 }

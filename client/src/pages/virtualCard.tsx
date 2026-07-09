@@ -61,8 +61,6 @@ export default function VirtualCard() {
       `TEL;TYPE=CELL:${formData.phone}`,
       `EMAIL:${formData.email}`,
       `URL:${formData.websiteLink}`,
-      "BDAY:19900101",
-      "NOTE:Met at tech conference",
       "END:VCARD",
     ].join("\n");
 
