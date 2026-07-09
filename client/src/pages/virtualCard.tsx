@@ -4,6 +4,8 @@ import Card from "../components/Card";
 
 export default function VirtualCard() {
   let { id } = useParams();
+
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -11,13 +13,14 @@ export default function VirtualCard() {
     color: "",
     websiteLink: "",
     companyName: "",
-    aboutDescription:"",
+    aboutDescription: "",
     jobTitle: "",
     previewBackgroundImage: "",
     previewImage: "",
   });
 
   const getCardData = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(`${import.meta.env.VITE_API_URL}get-card`, {
         method: "POST",
@@ -37,6 +40,7 @@ export default function VirtualCard() {
     } catch (error) {
       console.log(error);
     } finally {
+      setIsLoading(false);
     }
   };
 
@@ -70,6 +74,17 @@ export default function VirtualCard() {
     a.click();
 
     URL.revokeObjectURL(a.href);
+  }
+
+  if (isLoading) {
+    return (
+      <>
+        <div className="w-[100%] h-[400px] mt-20 flex flex-col justify-center items-center">
+          <p className="mb-2">Creating QR Code...</p>
+          <span className="loading loading-dots loading-xl"></span>
+        </div>
+      </>
+    );
   }
 
   return (
