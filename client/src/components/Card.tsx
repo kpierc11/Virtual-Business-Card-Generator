@@ -1,11 +1,11 @@
-import imgUrl from "../assets/placeholder.webp"
-
+import imgUrl from "../assets/placeholder.webp";
 
 interface Card {
   name: string;
   email: string;
   phone: string;
   color: string;
+  aboutDescription: string;
   websiteLink: string;
   companyName: string;
   jobTitle: string;
@@ -21,6 +21,7 @@ export default function Card({
   phone,
   color,
   websiteLink,
+  aboutDescription,
   companyName,
   jobTitle,
   previewBackgroundImage,
@@ -29,7 +30,7 @@ export default function Card({
 }: Card) {
   return (
     <div className="flex justify-center items-center virtual-card">
-      <div className="w-[100%] max-w-[800px]">
+      <div className="w-[100%] min-w-[100%]">
         <div className="card bg-base-100 grow-1 w-[100%] h-[100%]">
           {previewBackgroundImage ? (
             <div className="h-80 relative">
@@ -57,13 +58,13 @@ export default function Card({
             >
               <div className="flex flex-col items-start justify-center mt-20 ml-5">
                 <h1 className="font-bold text-[24px] text-white">
-                  {name ? name : "Cat Smith"}
+                  {name ? name : "John Smith"}
                 </h1>
                 <div className="text-white">
                   {jobTitle ? jobTitle : "Software Developer"}
                 </div>
-                <div className="text-white" style={{fontStyle:"italic"}}>
-                  {companyName ? companyName : "Dpi Power"}
+                <div className="text-white" style={{ fontStyle: "italic" }}>
+                  {companyName ? companyName : "Some Company"}
                 </div>
               </div>
             </div>
@@ -78,23 +79,22 @@ export default function Card({
                 <div className="flex flex-col items-center rounded-full mt-[-80px] p-4">
                   <div>
                     <img
-                     className="w-[170px] h-[170px]" style={{borderRadius:"50%", objectFit:"cover"}}
-                      src={
-                        previewImage
-                          ? previewImage
-                          : imgUrl
-                      }
+                      className="w-[170px] h-[170px]"
+                      style={{ borderRadius: "50%", objectFit: "cover" }}
+                      src={previewImage ? previewImage : imgUrl}
                     />
                   </div>
                   <div className="mt-5">
                     <div className="font-bold">About Me</div>
                     <div>
                       <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                        {aboutDescription
+                          ? aboutDescription
+                          : `Lorem ipsum dolor sit amet, consectetur adipiscing elit,
                         sed do eiusmod tempor incididunt ut labore et dolore
                         magna aliqua. Ut enim ad minim veniam, quis nostrud
                         exercitation ullamco laboris nisi ut aliquip ex ea
-                        commodo consequat.
+                        commodo consequat.`}
                       </p>
                     </div>
                   </div>
@@ -184,7 +184,7 @@ export default function Card({
                 <button
                   onClick={handleVcfDownload}
                   className="btn btn-secondary mt-10 add-button-vcf"
-                  style={{fontWeight:"normal", borderRadius:2}}
+                  style={{ fontWeight: "normal", borderRadius: 2 }}
                 >
                   Add Contact
                 </button>

@@ -11,6 +11,7 @@ export default function VirtualCard() {
     color: "",
     websiteLink: "",
     companyName: "",
+    aboutDescription:"",
     jobTitle: "",
     previewBackgroundImage: "",
     previewImage: "",
@@ -80,6 +81,7 @@ export default function VirtualCard() {
       color={formData.color}
       websiteLink={formData.websiteLink}
       companyName={formData.companyName}
+      aboutDescription={formData.aboutDescription}
       jobTitle={formData.jobTitle}
       previewBackgroundImage={formData.previewBackgroundImage}
       previewImage={formData.previewImage}

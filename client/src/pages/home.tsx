@@ -11,6 +11,7 @@ export default function Home() {
     color: "",
     websiteLink: "",
     companyName: "",
+    aboutDescription: "",
     jobTitle: "",
   });
 
@@ -42,8 +43,10 @@ export default function Home() {
     }
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target;
 
     setFormData((prev) => ({
       ...prev,
@@ -320,6 +323,15 @@ export default function Home() {
                       />
                     </label>
                   </div>
+                  <div className="flex flex-row justify-center gap-5 w-[100%]">
+                    <textarea
+                      className="textarea"
+                      placeholder="About Me"
+                      name="aboutDescription"
+                      value={formData.aboutDescription}
+                      onChange={handleChange}
+                    ></textarea>
+                  </div>
                 </div>
 
                 <div className="card card-border items-center bg-base-100 card-body flex gap-2 shadow-sm w-[100%] max-w-[800px] pb-20">
@@ -373,14 +385,15 @@ export default function Home() {
           </div>
 
           <Card
-                name={formData.name}
-                email={formData.email}
-                phone={formData.phone}
-                color={formData.color}
-                websiteLink={formData.websiteLink}
-                companyName={formData.companyName}
-                jobTitle={formData.jobTitle}
-              ></Card>
+            name={formData.name}
+            email={formData.email}
+            phone={formData.phone}
+            color={formData.color}
+            aboutDescription={formData.aboutDescription}
+            websiteLink={formData.websiteLink}
+            companyName={formData.companyName}
+            jobTitle={formData.jobTitle}
+          ></Card>
         </div>
       </section>
     </>
