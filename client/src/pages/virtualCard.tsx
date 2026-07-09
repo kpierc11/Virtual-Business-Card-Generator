@@ -80,7 +80,7 @@ export default function VirtualCard() {
     return (
       <>
         <div className="w-[100%] h-[400px] mt-20 flex flex-col justify-center items-center">
-          <p className="mb-2">Creating QR Code...</p>
+          <p className="mb-2">Loading Card...</p>
           <span className="loading loading-dots loading-xl"></span>
         </div>
       </>
