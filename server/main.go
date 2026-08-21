@@ -19,12 +19,12 @@ var db *pgxpool.Pool
 
 type CardData struct {
 	ID   string `json:"id"`
-	Data any    `json:"card_data,omitempty"`
+	Data any    `json:"data,omitempty"`
 }
 
 func listCards(c *gin.Context) {
 
-	rows, err := db.Query(context.Background(), `SELECT id, card_data FROM virtual_cards`)
+	rows, err := db.Query(context.Background(), `SELECT card_id, card_data FROM virtual_cards`)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -59,20 +59,23 @@ func listCards(c *gin.Context) {
 func createCard(c *gin.Context) {
 	var card CardData
 
-	if err := c.ShouldBindJSON(&card); err != nil {
+	if err := c.BindJSON(&card); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	jsonData, err := json.Marshal(card)
+
+	fmt.Printf("Body: %v", jsonData)
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to encode JSON"})
 		return
 	}
 
-	sqlStatement := `INSERT INTO virtual_cards (id, card_data) VALUES ($1, $2::jsonb)`
+	sqlStatement := `INSERT INTO virtual_cards (card_data) VALUES ($1)`
 
-	_, dbError := db.Exec(context.Background(), sqlStatement, card.ID, jsonData)
+	_, dbError := db.Exec(context.Background(), sqlStatement, card.Data)
 	if dbError != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "database error"})
 		return
@@ -88,7 +91,7 @@ func getCard(c *gin.Context) {
 	id := c.Param("id")
 	var card CardData
 
-	err := db.QueryRow(context.Background(), "SELECT id, card_data FROM virtual_cards WHERE id = $1", id).Scan(&card.ID, &card.Data)
+	err := db.QueryRow(context.Background(), "SELECT card_id, card_data FROM virtual_cards WHERE card_id = $1", id).Scan(&card.ID, &card.Data)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -108,15 +111,15 @@ func editCard(c *gin.Context) {
 		return
 	}
 
-	jsonData, err := json.Marshal(card)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to encode JSON"})
-		return
-	}
+	// jsonData, err := json.Marshal(card)
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to encode JSON"})
+	// 	return
+	// }
 
-	sqlStatement := `UPDATE virtual_cards SET card_data = $2::jsonb WHERE id = $1`
+	sqlStatement := `UPDATE virtual_cards SET card_data = $2 WHERE card_id = $1`
 
-	_, dbError := db.Exec(context.Background(), sqlStatement, id, jsonData)
+	_, dbError := db.Exec(context.Background(), sqlStatement, id, card.Data)
 	if dbError != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "database error"})
 		return
@@ -129,14 +132,8 @@ func editCard(c *gin.Context) {
 
 func deleteCard(c *gin.Context) {
 	id := c.Param("id")
-	var card CardData
 
-	if err := c.ShouldBindJSON(&card); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-		return
-	}
-
-	sqlStatement := `DELETE FROM virtual_cards WHERE id = $1`
+	sqlStatement := `DELETE FROM virtual_cards WHERE card_id = $1`
 
 	_, dbError := db.Exec(context.Background(), sqlStatement, id)
 	if dbError != nil {
@@ -145,7 +142,7 @@ func deleteCard(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Record Added",
+		"message": "Record Deleted",
 	})
 }
 

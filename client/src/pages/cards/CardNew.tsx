@@ -4,7 +4,6 @@ import Card from "../../components/Card";
 
 export default function CardNew() {
   const [formData, setFormData] = useState({
-    id: "",
     name: "",
     email: "",
     phone: "",
@@ -57,20 +56,14 @@ export default function CardNew() {
   const handleFormSubmit = async (event: React.SubmitEvent) => {
     event.preventDefault();
 
-    const uniqueID = Array.from(crypto.getRandomValues(new Uint8Array(16)))
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("");
-
-    formData.id = uniqueID;
-
     setIsLoading(true);
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}add-card`, {
+      await fetch(`${import.meta.env.VITE_API_URL}cards/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({data:formData}),
       });
       await new Promise((r) => {
         setTimeout(r, 2000);
@@ -130,7 +123,7 @@ export default function CardNew() {
               id="qr-code"
               width="300"
               height="300"
-              value={`${import.meta.env.VITE_BASE_URL}cards/${formData.id}`}
+              value={`${import.meta.env.VITE_BASE_URL}cards/`}
             />
             <button
               className="btn btn-primary mt-10"

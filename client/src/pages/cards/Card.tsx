@@ -36,7 +36,7 @@ export default function VirtualCard() {
       const cardData = await response.json();
       console.log(cardData)
 
-      setFormData(cardData.card_data);
+      setFormData(cardData.data);
     } catch (error) {
       console.log(error);
     } finally {
