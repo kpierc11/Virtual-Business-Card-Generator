@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import Card from "../components/Card";
+import Card from "../../components/Card";
+import { useParams } from "react-router";
 
-export default function Home() {
+export default function CardEdit() {
+  let { id } = useParams();
   const [formData, setFormData] = useState({
     id: "",
     name: "",
@@ -20,6 +22,38 @@ export default function Home() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [showQRCode, setShowQRCode] = useState(false);
+
+  const getCardData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}cards/${id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (!response.ok) {
+        return;
+      }
+
+      const cardData = await response.json();
+      console.log(cardData);
+
+      setFormData(cardData.card_data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getCardData();
+  }, []);
 
   const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -65,8 +99,8 @@ export default function Home() {
 
     setIsLoading(true);
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}add-card`, {
-        method: "POST",
+      await fetch(`${import.meta.env.VITE_API_URL}cards/${id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
@@ -114,7 +148,7 @@ export default function Home() {
     return (
       <>
         <div className="w-[100%] h-[400px] mt-20 flex flex-col justify-center items-center">
-          <p className="mb-2">Creating QR Code...</p>
+          <p className="mb-2">Signing Up...</p>
           <span className="loading loading-dots loading-xl"></span>
         </div>
       </>
@@ -130,7 +164,7 @@ export default function Home() {
               id="qr-code"
               width="300"
               height="300"
-              value={`${import.meta.env.VITE_BASE_URL}virtual-card/${formData.id}`}
+              value={`${import.meta.env.VITE_BASE_URL}cards/${formData.id}`}
             />
             <button
               className="btn btn-primary mt-10"
@@ -146,7 +180,17 @@ export default function Home() {
 
   return (
     <>
-      <section className="w-[100%] mt-20 mb-50">
+      <section className="w-[100%] mt-10 mb-50">
+        <div className="breadcrumbs text-sm ml-20">
+          <ul>
+            <li>
+              <a href="/">Dashboard</a>
+            </li>
+            <li>
+              <div>Edit Card</div>
+            </li>
+          </ul>
+        </div>
         <div className="grid justify-items-center grid-cols-1 md:grid-cols-[2fr_1fr] gap-4 gap-2 mr-2 ml-2 p-2 md:p-10">
           <div className="w-[100%] h-[100%] justify-center items-center">
             <div className=" items-center w-[100%]">
@@ -377,7 +421,7 @@ export default function Home() {
                 {/* Submit */}
                 <div className="card-actions justify-end">
                   <button className="btn btn-primary" type="submit">
-                    Create QR Code
+                    Update Card
                   </button>
                 </div>
               </form>

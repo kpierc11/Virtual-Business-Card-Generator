@@ -29,7 +29,7 @@ export default function Card({
   handleVcfDownload,
 }: Card) {
   return (
-    <div className="flex justify-center items-center virtual-card">
+    <div className="flex justify-center items-start virtual-card">
       <div className="w-[100%] min-w-[100%]">
         <div className="card bg-base-100 grow-1 w-[100%] h-[100%]">
           {previewBackgroundImage ? (

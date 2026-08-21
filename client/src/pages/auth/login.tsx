@@ -254,6 +254,8 @@ export default function Login() {
             </svg>
             Login with Google
           </button>
+          <span>Don't have an account?</span>
+          <a className="link" href="/signup">Sign up</a>
         </div>
       </div>
     </>

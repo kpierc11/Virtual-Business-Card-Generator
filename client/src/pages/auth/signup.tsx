@@ -7,7 +7,7 @@ const supabase = createClient(
   import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
 );
 
-export default function Login() {
+export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [claims, setClaims] = useState(null);
@@ -84,11 +84,11 @@ export default function Login() {
     setClaims(null);
   };
 
-  if (verifying) {
+  if (loading) {
     return (
       <>
         <div className="w-[100%] h-[400px] mt-20 flex flex-col justify-center items-center">
-          <p className="mb-2">Creating QR Code...</p>
+          <p className="mb-2">Loading...</p>
           <span className="loading loading-dots loading-xl"></span>
         </div>
       </>
@@ -141,7 +141,7 @@ export default function Login() {
     <>
       <div className="card bg-base-100 w-96 card-border bg-base-100 shadow-sm mt-20">
         <div className="card-body">
-          <h2 className="card-title">Login</h2>
+          <h2 className="card-title">Sign Up</h2>
           <form onSubmit={handleLogin}>
             <fieldset className="fieldset">
               <legend className="fieldset-legend">Email</legend>
@@ -204,8 +204,8 @@ export default function Login() {
                   type="password"
                   required
                   placeholder="Password"
-                  minLength={8}
-                  pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                //   minLength={8}
+                //   pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                   title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
                 />
               </label>
@@ -257,6 +257,8 @@ export default function Login() {
             </svg>
             Sign Up With Google
           </button>
+          <span>Already have an account?</span>
+          <a className="link" href="/login">Login</a>
         </div>
       </div>
     </>
