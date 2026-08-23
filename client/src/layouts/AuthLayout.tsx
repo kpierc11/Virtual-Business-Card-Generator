@@ -31,7 +31,7 @@ export default function AuthLayout() {
                 />
               </svg>
             </label>
-            <button className="btn btn-ghost text-xl">daisyUI</button>
+            <button className="btn btn-ghost text-xl">Virtual Business Card Generator</button>
           </div>
           <div className="navbar-center hidden lg:flex">
             <ul className="menu menu-horizontal px-1">

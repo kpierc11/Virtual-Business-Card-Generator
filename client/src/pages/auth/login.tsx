@@ -1,12 +1,6 @@
 import "../../index.css";
-import { useState, useEffect } from "react";
-import { createClient } from "@supabase/supabase-js";
-import { redirect } from "react-router";
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-);
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 export default function Login() {
   const [loading, setLoading] = useState(false);
@@ -14,35 +8,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [loggedIn, setLoggedIn] = useState(false);
 
-  useEffect(() => {}, []);
-
-  const handleLogin = async (event: any) => {
-    event.preventDefault();
-    setLoading(true);
-
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
-      });
-      if (error) {
-        alert(error.error_description || error.message);
-      } else {
-        setLoggedIn(true);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-    finally {
-      setLoading(false);
-      redirect("/"); 
-    }
-  };
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setClaims(null);
-  };
+  const { onLogin, onLogout } = useContext(AuthContext);
 
   if (loading) {
     return (
@@ -55,18 +21,12 @@ export default function Login() {
     );
   }
 
-
-  if(loggedIn)
-  {
-    return <div>User is logged in.</div>
-  }
-
   return (
     <>
       <div className="card bg-base-100 w-96 card-border bg-base-100 shadow-sm ">
         <div className="card-body">
           <h2 className="card-title">Login</h2>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={(event) => onLogin(event, email, password)}>
             <fieldset className="fieldset">
               <legend className="fieldset-legend">Email</legend>
               <label className="input validator">

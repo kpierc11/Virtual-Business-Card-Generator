@@ -108,7 +108,7 @@ export default function CardListing() {
   return (
     <>
       <div className="flex w-[100%] mb-10">
-        <a className="btn" href="/cards/new">
+        <a className="btn" href="dashboard/cards/new">
           Create New Card
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -148,7 +148,7 @@ export default function CardListing() {
                   <a
                     className="tooltip"
                     data-tip="Edit"
-                    href={`/cards/${id}/edit`}
+                    href={`dashboard/cards/${id}/edit`}
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -190,7 +190,7 @@ export default function CardListing() {
                   </button>
                 </div>
                 <div className="card-actions justify-center mt-8">
-                  <a className="btn btn-primary" href={`/cards/${id}`}>
+                  <a className="btn btn-primary" href={`dashboard/cards/${id}`}>
                     View Card
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

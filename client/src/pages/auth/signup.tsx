@@ -1,99 +1,24 @@
+import { AuthContext } from "../../context/AuthContext";
 import "../../index.css";
-import { useState, useEffect, type SubmitEvent } from "react";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-);
+import { useState, useEffect, type SubmitEvent, useContext } from "react";
 
 export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [claims, setClaims] = useState(null);
 
-  // Check URL params on initial render
-  const params = new URLSearchParams(window.location.search);
-  const hasTokenHash = params.get("token_hash");
-
-  const [verifying, setVerifying] = useState(!!hasTokenHash);
-  const [authError, setAuthError] = useState(null);
-  const [authSuccess, setAuthSuccess] = useState(false);
-
-  useEffect(() => {
-    // Check if we have token_hash in URL (magic link callback)
-    const params = new URLSearchParams(window.location.search);
-    const token_hash = params.get("token_hash");
-    const type = params.get("type");
-
-    if (token_hash) {
-      // Verify the OTP token
-      supabase.auth
-        .verifyOtp({
-          token_hash,
-          type: type || "email",
-        })
-        .then(({ error }) => {
-          if (error) {
-            setAuthError(error.message);
-          } else {
-            setAuthSuccess(true);
-            // Clear URL params
-            window.history.replaceState({}, document.title, "/");
-          }
-          setVerifying(false);
-        });
-    }
-
-    // Check for existing session using getClaims
-    supabase.auth.getClaims().then(({ data: { claims } }) => {
-      setClaims(claims);
-    });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
-      supabase.auth.getClaims().then(({ data: { claims } }) => {
-        setClaims(claims);
-      });
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const handleSignUp = async (event:SubmitEvent) => {
-    event.preventDefault();
-    setLoading(true);
-    const { data, error } = await supabase.auth.signUp({
-    email: email,
-    password: password,
-    options: {
-      emailRedirectTo: 'https://example.com/welcome',
-    },
-  })
-    if (error) {
-      alert(error.error_description || error.message);
-    } else {
-      alert("Check your email for the login link!");
-    }
-    setLoading(false);
-  };
-
-
+  const { onSignUp } = useContext(AuthContext);
 
   if (loading) {
     return (
       <>
         <div className="w-[100%] h-[400px] mt-20 flex flex-col justify-center items-center">
-          <p className="mb-2">Loading...</p>
+          <p className="mb-2">Registering User...</p>
           <span className="loading loading-dots loading-xl"></span>
         </div>
       </>
     );
   }
-
 
   // Show login form
   return (
@@ -101,7 +26,7 @@ export default function SignUp() {
       <div className="card bg-base-100 w-96 card-border bg-base-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title">Sign Up</h2>
-          <form onSubmit={handleSignUp}>
+          <form onSubmit={(event) => onSignUp(event, email, password)}>
             <fieldset className="fieldset">
               <legend className="fieldset-legend">Email</legend>
               <label className="input validator">
@@ -163,10 +88,10 @@ export default function SignUp() {
                   type="password"
                   required
                   placeholder="Password"
-                //   minLength={8}
-                //   pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                  //   minLength={8}
+                  //   pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                   title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
-                  onChange={(e)=>setPassword(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </label>
             </fieldset>
@@ -218,7 +143,9 @@ export default function SignUp() {
             Sign Up With Google
           </button>
           <span>Already have an account?</span>
-          <a className="link" href="/login">Login</a>
+          <a className="link" href="/login">
+            Login
+          </a>
         </div>
       </div>
     </>

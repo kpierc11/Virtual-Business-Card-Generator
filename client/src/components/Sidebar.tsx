@@ -1,10 +1,15 @@
-import { Link } from "react-router";
+import { Link, redirect, useNavigate } from "react-router";
+import { AuthContext } from "../context/AuthContext";
+import { useContext } from "react";
 
 export default function Sidebar() {
+
+  const {onLogout} = useContext(AuthContext);
+
   return (
     <ul className="menu w-full grow">
       {/* List item */}
-      <Link to="/">
+      <Link to="/dashboard">
         <li>
           <button
             className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
@@ -83,6 +88,7 @@ export default function Sidebar() {
         <button
           className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
           data-tip="Logout"
+          onClick={onLogout}
         >
           {/* Logout icon */}
           <svg

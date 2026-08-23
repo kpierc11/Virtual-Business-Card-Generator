@@ -143,7 +143,7 @@ export default function CardNew() {
         <div className="breadcrumbs text-sm ml-20">
           <ul>
             <li>
-              <a href="/">Dashboard</a>
+              <a href="/dashboard">Dashboard</a>
             </li>
             <li>
               <div>New Card</div>
