@@ -1,18 +1,35 @@
 import { BrowserRouter, Route, Routes } from "react-router";
-import Home from "./pages/home";
-import VirtualCard from "./pages/virtualCard";
-import MainLayout from "./layout";
+import VirtualCard from "./pages/cards/Card";
+import CardListing from "./pages/cards/CardsListing";
+import CardNew from "./pages/cards/CardNew";
+import CardEdit from "./pages/cards/CardEdit";
+import DashboardLayout from "./layouts/DashboardLayout";
+import AuthLayout from "./layouts/AuthLayout";
+import Login from "./pages/auth/login";
+import SignUp from "./pages/auth/signup";
+import AuthProvider from "./context/AuthContext";
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route element={<MainLayout />}>
-          <Route index element={<Home />} />
-        </Route>
+      <AuthProvider>
+        <Routes>
+          <Route element={<DashboardLayout />}>
+            <Route path="dashboard" element={<CardListing />} />
+            <Route path="dashboard/cards" element={<CardListing />} />
+            <Route path="dashboard/cards/new" element={<CardNew />} />W
+            <Route path="dashboard/cards/:id/edit" element={<CardEdit />} />
+          </Route>
 
-        <Route path="virtual-card/:id" element={<VirtualCard />} />
-      </Routes>
+          <Route element={<AuthLayout />}>
+            <Route index element={<Login />} />
+            <Route path="login" element={<Login />} />
+            <Route path="signup" element={<SignUp />} />
+          </Route>
+
+          <Route path="cards/:id" element={<VirtualCard />} />
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   );
 }

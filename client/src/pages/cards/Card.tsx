@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import Card from "../components/Card";
+import Card from "../../components/Card";
 
 export default function VirtualCard() {
   let { id } = useParams();
@@ -22,12 +22,11 @@ export default function VirtualCard() {
   const getCardData = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}get-card`, {
-        method: "POST",
+      const response = await fetch(`${import.meta.env.VITE_API_URL}cards/${id}`, {
+        method: "GET",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id }),
       });
 
       if (!response.ok) {
@@ -35,6 +34,7 @@ export default function VirtualCard() {
       }
 
       const cardData = await response.json();
+      console.log(cardData)
 
       setFormData(cardData.data);
     } catch (error) {

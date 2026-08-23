@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import Card from "../components/Card";
+import Card from "../../components/Card";
+import { useParams } from "react-router";
 
-export default function Home() {
+export default function CardEdit() {
+  let { id } = useParams();
   const [formData, setFormData] = useState({
     id: "",
     name: "",
@@ -20,6 +22,38 @@ export default function Home() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [showQRCode, setShowQRCode] = useState(false);
+
+  const getCardData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}cards/${id}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (!response.ok) {
+        return;
+      }
+
+      const cardData = await response.json();
+      console.log(cardData);
+
+      setFormData(cardData.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getCardData();
+  }, []);
 
   const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -57,16 +91,10 @@ export default function Home() {
   const handleFormSubmit = async (event: React.SubmitEvent) => {
     event.preventDefault();
 
-    const uniqueID = Array.from(crypto.getRandomValues(new Uint8Array(16)))
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("");
-
-    formData.id = uniqueID;
-
     setIsLoading(true);
     try {
-      await fetch(`${import.meta.env.VITE_API_URL}add-card`, {
-        method: "POST",
+      await fetch(`${import.meta.env.VITE_API_URL}cards/${id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
@@ -78,67 +106,15 @@ export default function Home() {
     } catch (error) {
     } finally {
       setIsLoading(false);
-      setShowQRCode(true);
     }
-  };
-
-  const handleDownloadQR = () => {
-    const svg = document.querySelector("#qr-code");
-    if (!svg) {
-      return;
-    }
-    const serializer = new XMLSerializer();
-    const source = serializer.serializeToString(svg);
-
-    const img = new Image();
-    img.src = "data:image/svg+xml;base64," + btoa(source);
-
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.width || 300;
-      canvas.height = img.height || 300;
-      const ctx = canvas.getContext("2d");
-      ctx?.drawImage(img, 0, 0);
-
-      const jpegUrl = canvas.toDataURL("image/jpeg");
-      const link = document.createElement("a");
-      link.href = jpegUrl;
-      link.download = "qr-code.jpeg";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    };
   };
 
   if (isLoading) {
     return (
       <>
         <div className="w-[100%] h-[400px] mt-20 flex flex-col justify-center items-center">
-          <p className="mb-2">Creating QR Code...</p>
+          <p className="mb-2">Updating Card...</p>
           <span className="loading loading-dots loading-xl"></span>
-        </div>
-      </>
-    );
-  }
-
-  if (showQRCode) {
-    return (
-      <>
-        <div className="w-[100%] h-[400px] mt-40 flex flex-col justify-center items-center">
-          <div className="card card-border bg-base-100 p-10">
-            <QRCodeSVG
-              id="qr-code"
-              width="300"
-              height="300"
-              value={`${import.meta.env.VITE_BASE_URL}virtual-card/${formData.id}`}
-            />
-            <button
-              className="btn btn-primary mt-10"
-              onClick={handleDownloadQR}
-            >
-              Download QR Code
-            </button>
-          </div>
         </div>
       </>
     );
@@ -146,7 +122,17 @@ export default function Home() {
 
   return (
     <>
-      <section className="w-[100%] mt-20 mb-50">
+      <section className="w-[100%] mt-10 mb-50">
+        <div className="breadcrumbs text-sm ml-20">
+          <ul>
+            <li>
+              <a href="/dashboard">Dashboard</a>
+            </li>
+            <li>
+              <div>Edit Card</div>
+            </li>
+          </ul>
+        </div>
         <div className="grid justify-items-center grid-cols-1 md:grid-cols-[2fr_1fr] gap-4 gap-2 mr-2 ml-2 p-2 md:p-10">
           <div className="w-[100%] h-[100%] justify-center items-center">
             <div className=" items-center w-[100%]">
@@ -165,7 +151,7 @@ export default function Home() {
                       name="name"
                       placeholder="Name"
                       className="input"
-                      value={formData.name}
+                      value={formData?.name}
                       onChange={handleChange}
                     />
 
@@ -198,7 +184,7 @@ export default function Home() {
                         name="email"
                         placeholder="mail@site.com"
                         required
-                        value={formData.email}
+                        value={formData?.email}
                         onChange={handleChange}
                       />
                     </label>
@@ -236,7 +222,7 @@ export default function Home() {
                         placeholder="Phone"
                         pattern="[0-9]*"
                         title="Must be 10 digits"
-                        value={formData.phone}
+                        value={formData?.phone}
                         onChange={handleChange}
                       />
                     </label>
@@ -264,7 +250,7 @@ export default function Home() {
                         name="websiteLink"
                         placeholder="Website Url"
                         required
-                        value={formData.websiteLink}
+                        value={formData?.websiteLink}
                         onChange={handleChange}
                       />
                     </label>
@@ -292,7 +278,7 @@ export default function Home() {
                         name="companyName"
                         placeholder="Company Name"
                         required
-                        value={formData.companyName}
+                        value={formData?.companyName}
                         onChange={handleChange}
                       />
                     </label>
@@ -318,7 +304,7 @@ export default function Home() {
                         name="jobTitle"
                         placeholder="Job Title"
                         required
-                        value={formData.jobTitle}
+                        value={formData?.jobTitle}
                         onChange={handleChange}
                       />
                     </label>
@@ -328,7 +314,7 @@ export default function Home() {
                       className="textarea"
                       placeholder="About Me"
                       name="aboutDescription"
-                      value={formData.aboutDescription}
+                      value={formData?.aboutDescription}
                       onChange={handleChange}
                     ></textarea>
                   </div>
@@ -368,7 +354,7 @@ export default function Home() {
                         type="color"
                         id="background"
                         name="color"
-                        value={formData.color}
+                        value={formData?.color}
                         onChange={handleChange}
                       />
                     </div>
@@ -377,7 +363,7 @@ export default function Home() {
                 {/* Submit */}
                 <div className="card-actions justify-end">
                   <button className="btn btn-primary" type="submit">
-                    Create QR Code
+                    Update Card
                   </button>
                 </div>
               </form>
@@ -385,14 +371,14 @@ export default function Home() {
           </div>
 
           <Card
-            name={formData.name}
-            email={formData.email}
-            phone={formData.phone}
-            color={formData.color}
-            aboutDescription={formData.aboutDescription}
-            websiteLink={formData.websiteLink}
-            companyName={formData.companyName}
-            jobTitle={formData.jobTitle}
+            name={formData?.name}
+            email={formData?.email}
+            phone={formData?.phone}
+            color={formData?.color}
+            aboutDescription={formData?.aboutDescription}
+            websiteLink={formData?.websiteLink}
+            companyName={formData?.companyName}
+            jobTitle={formData?.jobTitle}
           ></Card>
         </div>
       </section>

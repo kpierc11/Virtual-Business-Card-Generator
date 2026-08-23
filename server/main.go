@@ -1,89 +1,81 @@
 package main
 
 import (
-	"database/sql"
+	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 )
 
-var db *sql.DB
+var db *pgxpool.Pool
 
 type CardData struct {
-	ID                     string `json:"id"`
-	Name                   string `json:"name"`
-	Email                  string `json:"email"`
-	Phone                  string `json:"phone"`
-	Color                  string `json:"color"`
-	WebsiteLink            string `json:"websiteLink"`
-	CompanyName            string `json:"companyName"`
-	JobTitle               string `json:"jobTitle"`
-	AboutDescription       string `json:"aboutDescription"`
-	PreviewBackgroundImage string `json:"previewBackgroundImage"`
-	PreviewImage           string `json:"previewImage"`
+	ID   string `json:"id"`
+	Data any    `json:"data,omitempty"`
 }
 
-func getVirtualCard(c *gin.Context) {
+func listCards(c *gin.Context) {
 
-	type Request struct {
-		ID string `json:"id"`
-	}
+	rows, err := db.Query(context.Background(), `SELECT card_id, card_data FROM virtual_cards`)
 
-	var req Request
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
+	defer rows.Close()
 
-	sqlStatement := `SELECT id, card_data FROM virtual_cards WHERE id = $1`
-	var rawData []byte
-	var cardID string
+	var cards []CardData
 
-	row := db.QueryRow(sqlStatement, req.ID)
-	err := row.Scan(&cardID, &rawData)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			c.JSON(http.StatusNotFound, gin.H{"error": "card not found"})
+	for rows.Next() {
+		var card CardData
+
+		err := rows.Scan(
+			&card.ID,
+			&card.Data,
+		)
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": "Couldn't read card",
+			})
 			return
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "database error"})
-		return
+
+		cards = append(cards, card)
+
 	}
 
-	var cardData CardData
-	if err := json.Unmarshal(rawData, &cardData); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to parse card data"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"data": cardData,
-	})
+	c.JSON(http.StatusOK, cards)
 }
 
-func addNewVirtualCard(c *gin.Context) {
+func createCard(c *gin.Context) {
 	var card CardData
 
-	if err := c.ShouldBindJSON(&card); err != nil {
+	if err := c.BindJSON(&card); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	jsonData, err := json.Marshal(card)
+
+	fmt.Printf("Body: %v", jsonData)
+
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to encode JSON"})
 		return
 	}
 
-	sqlStatement := `INSERT INTO virtual_cards (id, card_data) VALUES ($1, $2::jsonb)`
+	sqlStatement := `INSERT INTO virtual_cards (card_data) VALUES ($1)`
 
-	_, dbError := db.Exec(sqlStatement, card.ID, jsonData)
+	_, dbError := db.Exec(context.Background(), sqlStatement, card.Data)
 	if dbError != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "database error"})
 		return
@@ -92,6 +84,77 @@ func addNewVirtualCard(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Record Added",
 	})
+}
+
+func getCard(c *gin.Context) {
+
+	id := c.Param("id")
+	var card CardData
+
+	err := db.QueryRow(context.Background(), "SELECT card_id, card_data FROM virtual_cards WHERE card_id = $1", id).Scan(&card.ID, &card.Data)
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, card)
+}
+
+func editCard(c *gin.Context) {
+
+	id := c.Param("id")
+	var card CardData
+
+	if err := c.ShouldBindJSON(&card); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// jsonData, err := json.Marshal(card)
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to encode JSON"})
+	// 	return
+	// }
+
+	sqlStatement := `UPDATE virtual_cards SET card_data = $2 WHERE card_id = $1`
+
+	_, dbError := db.Exec(context.Background(), sqlStatement, id, card.Data)
+	if dbError != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "database error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Record Added",
+	})
+}
+
+func deleteCard(c *gin.Context) {
+	id := c.Param("id")
+
+	sqlStatement := `DELETE FROM virtual_cards WHERE card_id = $1`
+
+	_, dbError := db.Exec(context.Background(), sqlStatement, id)
+	if dbError != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "database error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Record Deleted",
+	})
+}
+
+func RegisterCardRoutes(rg *gin.RouterGroup) {
+	cards := rg.Group("/cards")
+	{
+		cards.GET("/", listCards)
+		cards.POST("/", createCard)
+		cards.GET("/:id", getCard)
+		cards.PUT("/:id", editCard)
+		cards.DELETE("/:id", deleteCard)
+	}
 }
 
 func main() {
@@ -108,16 +171,18 @@ func main() {
 		log.Fatalf("Couldn't find env variable")
 	}
 
-	var err error
-	db, err = sql.Open("postgres", dsn)
-	if err != nil {
-		log.Fatal(err)
+	var dbError error
+	db, dbError = pgxpool.New(context.Background(), dsn)
+	if dbError != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", dbError)
+		os.Exit(1)
 	}
-	defer db.Close()
 
-	if err := db.Ping(); err != nil {
-		log.Fatal(err)
+	if dbError = db.Ping(context.Background()); dbError != nil {
+		log.Fatal("Couldn't connect to database:", dbError)
 	}
+
+	defer db.Close()
 
 	router := gin.Default()
 	router.SetTrustedProxies([]string{"localhost:5173"})
@@ -130,8 +195,8 @@ func main() {
 
 	router.Use(cors.New(config))
 
-	router.POST("/add-card", addNewVirtualCard)
-	router.POST("/get-card", getVirtualCard)
+	api := router.Group("/v1")
+	RegisterCardRoutes(api)
 
 	router.Run("[::]:8080")
 }
