@@ -4,7 +4,7 @@ import Modal from "../../components/Modal";
 
 export default function CardListing() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [cards, setCards] = useState([]);
+  const [cards, setCards] = useState<any>([{}]);
   const [itemToDeleteID, setItemToDelteID] = useState(0);
 
   const handleDownloadQR = () => {
@@ -127,9 +127,9 @@ export default function CardListing() {
         </a>
       </div>
       <div className="flex flex-wrap gap-20">
-        {cards.map(({ id, data }) => {
+        {cards.map(({ id, data }:any) => {
           return (
-            <div className="card bg-base-100 w-96 shadow-lg">
+            <div key={id} className="card bg-base-100 w-96 shadow-lg">
               <figure className="mt-5">
                 <QRCodeSVG
                   id="qr-code"
@@ -142,7 +142,7 @@ export default function CardListing() {
                 <div className="badge badge-soft badge-primary">
                   Virtual Card
                 </div>
-                <div className="font-bold mt-4">Owner: {data.name}</div>
+                <div className="font-bold mt-4">Owner: {data?.name}</div>
                 <div className="flex items-center mt-4">
                   <p>Edit Card</p>
                   <a

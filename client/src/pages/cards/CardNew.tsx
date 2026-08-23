@@ -107,7 +107,7 @@ export default function CardNew() {
     return (
       <>
         <div className="w-[100%] h-[400px] mt-20 flex flex-col justify-center items-center">
-          <p className="mb-2">Signing Up...</p>
+          <p className="mb-2">Creating New Card...</p>
           <span className="loading loading-dots loading-xl"></span>
         </div>
       </>

@@ -91,12 +91,6 @@ export default function CardEdit() {
   const handleFormSubmit = async (event: React.SubmitEvent) => {
     event.preventDefault();
 
-    const uniqueID = Array.from(crypto.getRandomValues(new Uint8Array(16)))
-      .map((b) => b.toString(16).padStart(2, "0"))
-      .join("");
-
-    formData.id = uniqueID;
-
     setIsLoading(true);
     try {
       await fetch(`${import.meta.env.VITE_API_URL}cards/${id}`, {
@@ -112,67 +106,15 @@ export default function CardEdit() {
     } catch (error) {
     } finally {
       setIsLoading(false);
-      setShowQRCode(true);
     }
-  };
-
-  const handleDownloadQR = () => {
-    const svg = document.querySelector("#qr-code");
-    if (!svg) {
-      return;
-    }
-    const serializer = new XMLSerializer();
-    const source = serializer.serializeToString(svg);
-
-    const img = new Image();
-    img.src = "data:image/svg+xml;base64," + btoa(source);
-
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.width || 300;
-      canvas.height = img.height || 300;
-      const ctx = canvas.getContext("2d");
-      ctx?.drawImage(img, 0, 0);
-
-      const jpegUrl = canvas.toDataURL("image/jpeg");
-      const link = document.createElement("a");
-      link.href = jpegUrl;
-      link.download = "qr-code.jpeg";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    };
   };
 
   if (isLoading) {
     return (
       <>
         <div className="w-[100%] h-[400px] mt-20 flex flex-col justify-center items-center">
-          <p className="mb-2">Signing Up...</p>
+          <p className="mb-2">Updating Card...</p>
           <span className="loading loading-dots loading-xl"></span>
-        </div>
-      </>
-    );
-  }
-
-  if (showQRCode) {
-    return (
-      <>
-        <div className="w-[100%] h-[400px] mt-40 flex flex-col justify-center items-center">
-          <div className="card card-border bg-base-100 p-10">
-            <QRCodeSVG
-              id="qr-code"
-              width="300"
-              height="300"
-              value={`${import.meta.env.VITE_BASE_URL}cards/${formData.id}`}
-            />
-            <button
-              className="btn btn-primary mt-10"
-              onClick={handleDownloadQR}
-            >
-              Download QR Code
-            </button>
-          </div>
         </div>
       </>
     );
@@ -209,7 +151,7 @@ export default function CardEdit() {
                       name="name"
                       placeholder="Name"
                       className="input"
-                      value={formData.name}
+                      value={formData?.name}
                       onChange={handleChange}
                     />
 
@@ -242,7 +184,7 @@ export default function CardEdit() {
                         name="email"
                         placeholder="mail@site.com"
                         required
-                        value={formData.email}
+                        value={formData?.email}
                         onChange={handleChange}
                       />
                     </label>
@@ -280,7 +222,7 @@ export default function CardEdit() {
                         placeholder="Phone"
                         pattern="[0-9]*"
                         title="Must be 10 digits"
-                        value={formData.phone}
+                        value={formData?.phone}
                         onChange={handleChange}
                       />
                     </label>
@@ -308,7 +250,7 @@ export default function CardEdit() {
                         name="websiteLink"
                         placeholder="Website Url"
                         required
-                        value={formData.websiteLink}
+                        value={formData?.websiteLink}
                         onChange={handleChange}
                       />
                     </label>
@@ -336,7 +278,7 @@ export default function CardEdit() {
                         name="companyName"
                         placeholder="Company Name"
                         required
-                        value={formData.companyName}
+                        value={formData?.companyName}
                         onChange={handleChange}
                       />
                     </label>
@@ -362,7 +304,7 @@ export default function CardEdit() {
                         name="jobTitle"
                         placeholder="Job Title"
                         required
-                        value={formData.jobTitle}
+                        value={formData?.jobTitle}
                         onChange={handleChange}
                       />
                     </label>
@@ -372,7 +314,7 @@ export default function CardEdit() {
                       className="textarea"
                       placeholder="About Me"
                       name="aboutDescription"
-                      value={formData.aboutDescription}
+                      value={formData?.aboutDescription}
                       onChange={handleChange}
                     ></textarea>
                   </div>
@@ -412,7 +354,7 @@ export default function CardEdit() {
                         type="color"
                         id="background"
                         name="color"
-                        value={formData.color}
+                        value={formData?.color}
                         onChange={handleChange}
                       />
                     </div>
@@ -429,14 +371,14 @@ export default function CardEdit() {
           </div>
 
           <Card
-            name={formData.name}
-            email={formData.email}
-            phone={formData.phone}
-            color={formData.color}
-            aboutDescription={formData.aboutDescription}
-            websiteLink={formData.websiteLink}
-            companyName={formData.companyName}
-            jobTitle={formData.jobTitle}
+            name={formData?.name}
+            email={formData?.email}
+            phone={formData?.phone}
+            color={formData?.color}
+            aboutDescription={formData?.aboutDescription}
+            websiteLink={formData?.websiteLink}
+            companyName={formData?.companyName}
+            jobTitle={formData?.jobTitle}
           ></Card>
         </div>
       </section>

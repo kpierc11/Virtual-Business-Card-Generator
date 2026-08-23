@@ -1,6 +1,7 @@
 import "../../index.css";
 import { useState, useEffect } from "react";
 import { createClient } from "@supabase/supabase-js";
+import { redirect } from "react-router";
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -10,73 +11,32 @@ const supabase = createClient(
 export default function Login() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
-  const [claims, setClaims] = useState(null);
+  const [password, setPassword] = useState("");
+  const [loggedIn, setLoggedIn] = useState(false);
 
-  // Check URL params on initial render
-  const params = new URLSearchParams(window.location.search);
-  const hasTokenHash = params.get("token_hash");
+  useEffect(() => {}, []);
 
-  const [verifying, setVerifying] = useState(!!hasTokenHash);
-  const [authError, setAuthError] = useState(null);
-  const [authSuccess, setAuthSuccess] = useState(false);
-
-  useEffect(() => {
-    // Check if we have token_hash in URL (magic link callback)
-    const params = new URLSearchParams(window.location.search);
-    const token_hash = params.get("token_hash");
-    const type = params.get("type");
-
-    if (token_hash) {
-      // Verify the OTP token
-      supabase.auth
-        .verifyOtp({
-          token_hash,
-          type: type || "email",
-        })
-        .then(({ error }) => {
-          if (error) {
-            setAuthError(error.message);
-          } else {
-            setAuthSuccess(true);
-            // Clear URL params
-            window.history.replaceState({}, document.title, "/");
-          }
-          setVerifying(false);
-        });
-    }
-
-    // Check for existing session using getClaims
-    supabase.auth.getClaims().then(({ data: { claims } }) => {
-      setClaims(claims);
-    });
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(() => {
-      supabase.auth.getClaims().then(({ data: { claims } }) => {
-        setClaims(claims);
-      });
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const handleLogin = async (event) => {
+  const handleLogin = async (event: any) => {
     event.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: window.location.origin,
-      },
-    });
-    if (error) {
-      alert(error.error_description || error.message);
-    } else {
-      alert("Check your email for the login link!");
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+      });
+      if (error) {
+        alert(error.error_description || error.message);
+      } else {
+        setLoggedIn(true);
+      }
+    } catch (error) {
+      console.log(error);
     }
-    setLoading(false);
+    finally {
+      setLoading(false);
+      redirect("/"); 
+    }
   };
 
   const handleLogout = async () => {
@@ -84,62 +44,26 @@ export default function Login() {
     setClaims(null);
   };
 
-  if (verifying) {
+  if (loading) {
     return (
       <>
         <div className="w-[100%] h-[400px] mt-20 flex flex-col justify-center items-center">
-          <p className="mb-2">Creating QR Code...</p>
+          <p className="mb-2">Logging In...</p>
           <span className="loading loading-dots loading-xl"></span>
         </div>
       </>
     );
   }
 
-  // Show auth error
-  if (authError) {
-    return (
-      <div>
-        <h1>Authentication</h1>
-        <p>✗ Authentication failed</p>
-        <p>{authError}</p>
-        <button
-          onClick={() => {
-            setAuthError(null);
-            window.history.replaceState({}, document.title, "/");
-          }}
-        >
-          Return to login
-        </button>
-      </div>
-    );
+
+  if(loggedIn)
+  {
+    return <div>User is logged in.</div>
   }
 
-  // Show auth success (briefly before claims load)
-  if (authSuccess && !claims) {
-    return (
-      <div>
-        <h1>Authentication</h1>
-        <p>✓ Authentication successful!</p>
-        <p>Loading your account...</p>
-      </div>
-    );
-  }
-
-  // If user is logged in, show welcome screen
-  if (claims) {
-    return (
-      <div>
-        <h1>Welcome!</h1>
-        <p>You are logged in as: {claims.email}</p>
-        <button onClick={handleLogout}>Sign Out</button>
-      </div>
-    );
-  }
-
-  // Show login form
   return (
     <>
-      <div className="card bg-base-100 w-96 card-border bg-base-100 shadow-sm mt-20">
+      <div className="card bg-base-100 w-96 card-border bg-base-100 shadow-sm ">
         <div className="card-body">
           <h2 className="card-title">Login</h2>
           <form onSubmit={handleLogin}>
@@ -204,9 +128,9 @@ export default function Login() {
                   type="password"
                   required
                   placeholder="Password"
-                
                   //pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                   title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
+                  onChange={(e) => setPassword(e.target.value)}
                 />
               </label>
             </fieldset>
@@ -218,7 +142,10 @@ export default function Login() {
               At least one uppercase letter
             </p>
             <div></div>
-            <button className="btn mt-3 flex justify-self-center w-85" type="submit">
+            <button
+              className="btn mt-3 flex justify-self-center w-85"
+              type="submit"
+            >
               Login
             </button>
             <div className="flex justify-self-center font-bold mt-5">or</div>
@@ -255,7 +182,9 @@ export default function Login() {
             Login with Google
           </button>
           <span>Don't have an account?</span>
-          <a className="link" href="/signup">Sign up</a>
+          <a className="link" href="/signup">
+            Sign up
+          </a>
         </div>
       </div>
     </>

@@ -1,5 +1,5 @@
 import "../../index.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, type SubmitEvent } from "react";
 import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
@@ -10,6 +10,7 @@ const supabase = createClient(
 export default function SignUp() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [claims, setClaims] = useState(null);
 
   // Check URL params on initial render
@@ -62,15 +63,16 @@ export default function SignUp() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleLogin = async (event) => {
+  const handleSignUp = async (event:SubmitEvent) => {
     event.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: window.location.origin,
-      },
-    });
+    const { data, error } = await supabase.auth.signUp({
+    email: email,
+    password: password,
+    options: {
+      emailRedirectTo: 'https://example.com/welcome',
+    },
+  })
     if (error) {
       alert(error.error_description || error.message);
     } else {
@@ -79,10 +81,7 @@ export default function SignUp() {
     setLoading(false);
   };
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setClaims(null);
-  };
+
 
   if (loading) {
     return (
@@ -95,54 +94,14 @@ export default function SignUp() {
     );
   }
 
-  // Show auth error
-  if (authError) {
-    return (
-      <div>
-        <h1>Authentication</h1>
-        <p>✗ Authentication failed</p>
-        <p>{authError}</p>
-        <button
-          onClick={() => {
-            setAuthError(null);
-            window.history.replaceState({}, document.title, "/");
-          }}
-        >
-          Return to login
-        </button>
-      </div>
-    );
-  }
-
-  // Show auth success (briefly before claims load)
-  if (authSuccess && !claims) {
-    return (
-      <div>
-        <h1>Authentication</h1>
-        <p>✓ Authentication successful!</p>
-        <p>Loading your account...</p>
-      </div>
-    );
-  }
-
-  // If user is logged in, show welcome screen
-  if (claims) {
-    return (
-      <div>
-        <h1>Welcome!</h1>
-        <p>You are logged in as: {claims.email}</p>
-        <button onClick={handleLogout}>Sign Out</button>
-      </div>
-    );
-  }
 
   // Show login form
   return (
     <>
-      <div className="card bg-base-100 w-96 card-border bg-base-100 shadow-sm mt-20">
+      <div className="card bg-base-100 w-96 card-border bg-base-100 shadow-sm">
         <div className="card-body">
           <h2 className="card-title">Sign Up</h2>
-          <form onSubmit={handleLogin}>
+          <form onSubmit={handleSignUp}>
             <fieldset className="fieldset">
               <legend className="fieldset-legend">Email</legend>
               <label className="input validator">
@@ -207,6 +166,7 @@ export default function SignUp() {
                 //   minLength={8}
                 //   pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
                   title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
+                  onChange={(e)=>setPassword(e.target.value)}
                 />
               </label>
             </fieldset>
