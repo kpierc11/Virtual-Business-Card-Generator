@@ -5,9 +5,9 @@ import CardNew from "./pages/cards/CardNew";
 import CardEdit from "./pages/cards/CardEdit";
 import DashboardLayout from "./layouts/DashboardLayout";
 import AuthLayout from "./layouts/AuthLayout";
+import Login from "./pages/auth/login";
+import SignUp from "./pages/auth/signup";
 import AuthProvider from "./context/AuthContext";
-import Login from "./pages/auth/Login";
-import SignUp from "./pages/auth/Signup";
 
 function App() {
   return (
