@@ -87,7 +87,11 @@ export default function CardListing() {
 
   const handleModalOpen = (cardID: number) => {
     setItemToDelteID(cardID);
-    document.getElementById("my_modal_1").showModal();
+    let modal:any = document.getElementById("my_modal_1");
+
+    if (modal) {
+      modal.showModal();
+    }
   };
 
   useEffect(() => {
@@ -127,7 +131,7 @@ export default function CardListing() {
         </a>
       </div>
       <div className="flex flex-wrap gap-20">
-        {cards.map(({ id, data }:any) => {
+        {cards.map(({ id, data }: any) => {
           return (
             <div key={id} className="card bg-base-100 w-96 shadow-lg">
               <figure className="mt-5">

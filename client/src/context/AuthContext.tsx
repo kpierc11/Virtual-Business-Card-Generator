@@ -10,7 +10,7 @@ export const supabase = createClient(
 export interface AuthData {
   onLogin: (event: any, email: string, password: string) => any;
   onLogout: () => void;
-  onSignUp: (event: SubmitEvent, email: string, password: string) => any;
+  onSignUp: (event: any, email: string, password: string) => any;
   getUser: () => void;
   loggedIn: boolean;
 }
@@ -43,7 +43,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
         password: password,
       });
       if (error) {
-        console.log(error)
+        console.log(error);
       } else {
         setLoggedIn(true);
         navigate("/dashboard", { replace: true });
@@ -58,7 +58,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   const onLogout = async () => {
     try {
       const { error } = await supabase.auth.signOut();
-      
+
       if (error) {
         console.log(error);
       } else {
@@ -87,7 +87,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       },
     });
     if (error) {
-      alert(error.error_description || error.message);
+      console.log(error.message);
     } else {
       navigate("/dashboard", { replace: true });
     }
