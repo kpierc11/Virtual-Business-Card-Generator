@@ -26,25 +26,21 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
+    checkUserSession();
+
     const { data } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log(event, session);
       if (event === "INITIAL_SESSION") {
-        // handle initial session
       } else if (event === "SIGNED_IN") {
         // handle sign in event
       } else if (event === "SIGNED_OUT") {
         setLoggedIn(false);
         navigate("/", { replace: true });
-      } else if (event === "PASSWORD_RECOVERY") {
-        // handle password recovery event
-      } else if (event === "TOKEN_REFRESHED") {
-        // handle token refreshed event
-      } else if (event === "USER_UPDATED") {
-        // handle user updated event
       }
     });
-    // call unsubscribe to remove the callback
-    data.subscription.unsubscribe();
+
+    return () => {
+      data.subscription.unsubscribe();
+    };
   }, []);
 
   const navigate = useNavigate();
@@ -109,6 +105,20 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     setLoading(false);
+  };
+
+  const checkUserSession = async () => {
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
+
+    if (session) {
+      setLoggedIn(true);
+    } else {
+      setLoggedIn(false);
+      navigate("/", { replace: true });
+    }
   };
 
   if (loading) {

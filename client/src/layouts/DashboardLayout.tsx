@@ -8,11 +8,6 @@ import { AuthContext } from "../context/AuthContext";
 export default function DashboardLayout() {
   const { loggedIn } = useContext(AuthContext);
 
-
-  if (!loggedIn) {
-    return <Navigate to="/login" replace />;
-  }
-
   if (loggedIn) {
     return (
       <>
