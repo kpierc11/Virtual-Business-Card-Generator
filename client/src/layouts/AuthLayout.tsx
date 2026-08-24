@@ -56,13 +56,6 @@ export default function AuthLayout() {
               </li>
             </ul>
           </div>
-          <div className="navbar-end">
-            <input
-              type="text"
-              placeholder="Search"
-              className="input w-64 lg:w-auto"
-            />
-          </div>
         </div>
 
         <div className="collapse-content lg:hidden z-1">
