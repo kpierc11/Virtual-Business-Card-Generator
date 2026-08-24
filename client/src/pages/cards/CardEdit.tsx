@@ -1,20 +1,21 @@
 import { useEffect, useState } from "react";
-import { QRCodeSVG } from "qrcode.react";
 import Card from "../../components/Card";
 import { useParams } from "react-router";
+import type { CardData } from "../../types/CardData";
 
 export default function CardEdit() {
   let { id } = useParams();
-  const [formData, setFormData] = useState({
-    id: "",
+  const [formData, setFormData] = useState<CardData>({
+    websiteLink: "",
+    aboutDescription: "",
+    color: "",
     name: "",
     email: "",
     phone: "",
-    color: "",
-    websiteLink: "",
+    websiteURL: "",
     companyName: "",
-    aboutDescription: "",
     jobTitle: "",
+    description: "",
   });
 
   const [previewImage, setPreviewImage] = useState("");
@@ -41,9 +42,9 @@ export default function CardEdit() {
       }
 
       const cardData = await response.json();
-      console.log(cardData);
 
       setFormData(cardData.data);
+      console.log(cardData);
     } catch (error) {
       console.log(error);
     } finally {
@@ -77,9 +78,7 @@ export default function CardEdit() {
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+  const handleChange = (e:any) => {
     const { name, value } = e.target;
 
     setFormData((prev) => ({
@@ -99,9 +98,6 @@ export default function CardEdit() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
-      });
-      await new Promise((r) => {
-        setTimeout(r, 2000);
       });
     } catch (error) {
     } finally {
@@ -151,7 +147,7 @@ export default function CardEdit() {
                       name="name"
                       placeholder="Name"
                       className="input"
-                      value={formData?.name}
+                      value={formData.name}
                       onChange={handleChange}
                     />
 
@@ -184,8 +180,8 @@ export default function CardEdit() {
                         name="email"
                         placeholder="mail@site.com"
                         required
-                        value={formData?.email}
-                        onChange={handleChange}
+                        value={formData.email}
+                       onChange={handleChange}
                       />
                     </label>
                     <div className="validator-hint hidden">
@@ -222,7 +218,7 @@ export default function CardEdit() {
                         placeholder="Phone"
                         pattern="[0-9]*"
                         title="Must be 10 digits"
-                        value={formData?.phone}
+                        value={formData.phone}
                         onChange={handleChange}
                       />
                     </label>
@@ -250,7 +246,7 @@ export default function CardEdit() {
                         name="websiteLink"
                         placeholder="Website Url"
                         required
-                        value={formData?.websiteLink}
+                        value={formData.websiteLink}
                         onChange={handleChange}
                       />
                     </label>
@@ -278,7 +274,7 @@ export default function CardEdit() {
                         name="companyName"
                         placeholder="Company Name"
                         required
-                        value={formData?.companyName}
+                        value={formData.companyName}
                         onChange={handleChange}
                       />
                     </label>
@@ -304,7 +300,7 @@ export default function CardEdit() {
                         name="jobTitle"
                         placeholder="Job Title"
                         required
-                        value={formData?.jobTitle}
+                        value={formData.jobTitle}
                         onChange={handleChange}
                       />
                     </label>
@@ -314,7 +310,7 @@ export default function CardEdit() {
                       className="textarea"
                       placeholder="About Me"
                       name="aboutDescription"
-                      value={formData?.aboutDescription}
+                      value={formData.aboutDescription}
                       onChange={handleChange}
                     ></textarea>
                   </div>
@@ -354,8 +350,8 @@ export default function CardEdit() {
                         type="color"
                         id="background"
                         name="color"
-                        value={formData?.color}
-                        onChange={handleChange}
+                        value={formData.color}
+                         onChange={handleChange}
                       />
                     </div>
                   </div>
@@ -371,14 +367,14 @@ export default function CardEdit() {
           </div>
 
           <Card
-            name={formData?.name}
-            email={formData?.email}
-            phone={formData?.phone}
-            color={formData?.color}
-            aboutDescription={formData?.aboutDescription}
-            websiteLink={formData?.websiteLink}
-            companyName={formData?.companyName}
-            jobTitle={formData?.jobTitle}
+            name={formData.name}
+            email={formData.email}
+            phone={formData.phone}
+            color={formData.color}
+            aboutDescription={formData.aboutDescription}
+            websiteLink={formData.websiteLink}
+            companyName={formData.companyName}
+            jobTitle={formData.jobTitle}
           ></Card>
         </div>
       </section>

@@ -106,16 +106,10 @@ func editCard(c *gin.Context) {
 	id := c.Param("id")
 	var card CardData
 
-	if err := c.ShouldBindJSON(&card); err != nil {
+	if err := c.ShouldBindJSON(&card.Data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	// jsonData, err := json.Marshal(card)
-	// if err != nil {
-	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to encode JSON"})
-	// 	return
-	// }
 
 	sqlStatement := `UPDATE virtual_cards SET card_data = $2 WHERE card_id = $1`
 
@@ -126,7 +120,7 @@ func editCard(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Record Added",
+		"message": "Record Updated",
 	})
 }
 
