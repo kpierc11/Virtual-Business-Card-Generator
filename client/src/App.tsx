@@ -8,6 +8,7 @@ import AuthLayout from "./layouts/AuthLayout";
 import AuthProvider from "./context/AuthContext";
 import Login from "./pages/auth/Login";
 import SignUp from "./pages/auth/Signup";
+import NotFound from "./pages/NotFound";
 
 function App() {
   return (
@@ -17,17 +18,19 @@ function App() {
           <Route element={<DashboardLayout />}>
             <Route path="dashboard" element={<CardListing />} />
             <Route path="dashboard/cards" element={<CardListing />} />
-            <Route path="dashboard/cards/new" element={<CardNew />} />W
+            <Route path="dashboard/cards/new" element={<CardNew />} />
             <Route path="dashboard/cards/:id/edit" element={<CardEdit />} />
+            <Route path="*" element={<NotFound />} />
           </Route>
 
           <Route element={<AuthLayout />}>
             <Route index element={<Login />} />
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<SignUp />} />
+            <Route path="*" element={<NotFound />} />
           </Route>
 
-          <Route path="cards/:id" element={<VirtualCard />} />
+          <Route path="dashboard/cards/:id" element={<VirtualCard />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

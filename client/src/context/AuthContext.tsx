@@ -11,7 +11,6 @@ export interface AuthData {
   onLogin: (event: any, email: string, password: string) => any;
   onLogout: () => void;
   onSignUp: (event: any, email: string, password: string) => any;
-  getUser: () => void;
   loggedIn: boolean;
 }
 
@@ -19,7 +18,6 @@ export const AuthContext = createContext<AuthData>({
   onLogin: () => {},
   onLogout: () => {},
   onSignUp: () => {},
-  getUser: () => {},
   loggedIn: false,
 });
 
@@ -28,7 +26,25 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
-    getUser();
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log(event, session);
+      if (event === "INITIAL_SESSION") {
+        // handle initial session
+      } else if (event === "SIGNED_IN") {
+        // handle sign in event
+      } else if (event === "SIGNED_OUT") {
+        setLoggedIn(false);
+        navigate("/", { replace: true });
+      } else if (event === "PASSWORD_RECOVERY") {
+        // handle password recovery event
+      } else if (event === "TOKEN_REFRESHED") {
+        // handle token refreshed event
+      } else if (event === "USER_UPDATED") {
+        // handle user updated event
+      }
+    });
+    // call unsubscribe to remove the callback
+    data.subscription.unsubscribe();
   }, []);
 
   const navigate = useNavigate();
@@ -95,24 +111,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   };
 
-  async function getUser() {
-    try {
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser();
-      if (error) {
-        console.log(error);
-        setLoggedIn(false);
-        navigate("/", { replace: true });
-      } else {
-        setLoggedIn(true);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   if (loading) {
     return (
       <>
@@ -124,9 +122,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider
-      value={{ onLogin, onLogout, onSignUp, getUser, loggedIn }}
-    >
+    <AuthContext.Provider value={{ onLogin, onLogout, onSignUp, loggedIn }}>
       {children}
     </AuthContext.Provider>
   );
