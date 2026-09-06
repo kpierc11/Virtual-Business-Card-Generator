@@ -24,6 +24,7 @@ function App() {
           </Route>
 
           <Route element={<AuthLayout />}>
+            <Route index element={<Login />} />
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<SignUp />} />
             <Route path="*" element={<NotFound />} />

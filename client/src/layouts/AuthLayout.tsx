@@ -6,8 +6,8 @@ import { useContext } from "react";
 export default function AuthLayout() {
   const { loggedIn } = useContext(AuthContext);
 
-  if (!loggedIn) {
-    return <Navigate to="/login" replace />;
+  if (loggedIn) {
+    return <Navigate to="/dashboard" replace />;
   }
   
   return (
