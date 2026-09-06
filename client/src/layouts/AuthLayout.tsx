@@ -6,10 +6,6 @@ import { useContext } from "react";
 export default function AuthLayout() {
   const { loggedIn } = useContext(AuthContext);
 
-  if (loggedIn) {
-    return <Navigate to="/dashboard" replace />;
-  }
-  
   return (
     <>
       <div className="max-lg:collapse bg-base-200 lg:mb-10 shadow-sm w-full rounded-md">

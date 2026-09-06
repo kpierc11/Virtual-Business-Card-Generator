@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import VirtualCard from "./pages/cards/Card";
 import CardListing from "./pages/cards/CardsListing";
 import CardNew from "./pages/cards/CardNew";
@@ -15,6 +15,7 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route element={<DashboardLayout />}>
             <Route path="dashboard" element={<CardListing />} />
             <Route path="dashboard/cards" element={<CardListing />} />
@@ -24,7 +25,6 @@ function App() {
           </Route>
 
           <Route element={<AuthLayout />}>
-            <Route index element={<Login />} />
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<SignUp />} />
             <Route path="*" element={<NotFound />} />
