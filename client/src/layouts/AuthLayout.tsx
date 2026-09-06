@@ -1,7 +1,15 @@
-import { Outlet } from "react-router";
+import { Navigate, Outlet } from "react-router";
 import Footer from "../components/Footer";
+import { AuthContext } from "../context/AuthContext";
+import { useContext } from "react";
 
 export default function AuthLayout() {
+  const { loggedIn } = useContext(AuthContext);
+
+  if (!loggedIn) {
+    return <Navigate to="/login" replace />;
+  }
+  
   return (
     <>
       <div className="max-lg:collapse bg-base-200 lg:mb-10 shadow-sm w-full rounded-md">
@@ -31,9 +39,7 @@ export default function AuthLayout() {
                 />
               </svg>
             </label>
-            <button className="btn btn-ghost text-xl">
-              VBC Generator
-            </button>
+            <button className="btn btn-ghost text-xl">VBC Generator</button>
           </div>
           <div className="navbar-center hidden lg:flex mr-auto">
             <ul className="menu menu-horizontal px-1">
