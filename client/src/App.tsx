@@ -15,7 +15,7 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/" element={<Navigate to="dashboard" replace />} />
           <Route element={<DashboardLayout />}>
             <Route path="dashboard" element={<CardListing />} />
             <Route path="dashboard/cards" element={<CardListing />} />
