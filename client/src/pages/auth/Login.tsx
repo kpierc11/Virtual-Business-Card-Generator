@@ -23,7 +23,7 @@ export default function Login() {
 
   return (
     <>
-      <div className="card bg-base-100 w-96 card-border bg-base-100 shadow-sm ">
+      <div className="card bg-base-100 w-98 card-border bg-base-100 shadow-sm mr-2 ml-2">
         <div className="card-body">
           <h2 className="card-title">Login</h2>
           <form onSubmit={(event) => onLogin(event, email, password)}>
@@ -103,7 +103,7 @@ export default function Login() {
             </p>
             <div></div>
             <button
-              className="btn mt-3 flex justify-self-center w-85"
+              className="btn mt-3 flex justify-self-center w-[100%]"
               type="submit"
             >
               Login

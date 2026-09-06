@@ -1,12 +1,15 @@
 import { Navigate, Outlet, useNavigate } from "react-router";
 import Nav from "../components/Nav";
 import Sidebar from "../components/Sidebar";
-import { createClient } from "@supabase/supabase-js";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 
 export default function DashboardLayout() {
   const { loggedIn } = useContext(AuthContext);
+
+  if (!loggedIn) {
+    return <Navigate to="/login" replace />
+  }
 
   if (loggedIn) {
     return (
@@ -18,9 +21,7 @@ export default function DashboardLayout() {
             className="drawer-toggle inline"
           />
           <div className="drawer-content">
-            {/* Navbar */}
             <Nav></Nav>
-            {/* Page content here */}
             <div className="p-4">
               <Outlet />
             </div>

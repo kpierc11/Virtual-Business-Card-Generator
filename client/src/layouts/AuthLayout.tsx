@@ -31,28 +31,20 @@ export default function AuthLayout() {
                 />
               </svg>
             </label>
-            <button className="btn btn-ghost text-xl">Virtual Business Card Generator</button>
+            <button className="btn btn-ghost text-xl">
+              VBC Generator
+            </button>
           </div>
-          <div className="navbar-center hidden lg:flex">
+          <div className="navbar-center hidden lg:flex mr-auto">
             <ul className="menu menu-horizontal px-1">
               <li>
-                <button>Item 1</button>
+                <a href="/dashboard">Dashboard</a>
               </li>
               <li>
-                <details>
-                  <summary>Parent</summary>
-                  <ul className="p-2 bg-base-100 w-40 z-1">
-                    <li>
-                      <button>Submenu 1</button>
-                    </li>
-                    <li>
-                      <button>Submenu 2</button>
-                    </li>
-                  </ul>
-                </details>
+                <a href="/login">Login</a>
               </li>
               <li>
-                <button>Item 3</button>
+                <a href="/signup">Sign Up</a>
               </li>
             </ul>
           </div>
@@ -61,21 +53,13 @@ export default function AuthLayout() {
         <div className="collapse-content lg:hidden z-1">
           <ul className="menu">
             <li>
-              <button>Item 1</button>
+              <a href="/dashboard">Dashboard</a>
             </li>
             <li>
-              <button>Parent</button>
-              <ul>
-                <li>
-                  <button>Submenu 1</button>
-                </li>
-                <li>
-                  <button>Submenu 2</button>
-                </li>
-              </ul>
+              <a href="/login">Login</a>
             </li>
             <li>
-              <button>Item 3</button>
+              <a href="/signup">Sign Up</a>
             </li>
           </ul>
         </div>
