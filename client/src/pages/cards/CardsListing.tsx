@@ -194,7 +194,7 @@ export default function CardListing() {
                   </button>
                 </div>
                 <div className="card-actions justify-center mt-8">
-                  <a className="btn btn-primary" href={`dashboard/cards/${id}`}>
+                  <a className="btn btn-primary" href={`/cards/${id}`}>
                     View Card
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
