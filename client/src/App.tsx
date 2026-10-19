@@ -29,7 +29,7 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Route>
 
-          <Route path="dashboard/cards/:id" element={<VirtualCard />} />
+          <Route path="/cards/:id" element={<VirtualCard />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>
