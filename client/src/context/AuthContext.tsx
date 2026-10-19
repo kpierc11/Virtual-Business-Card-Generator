@@ -117,6 +117,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
       setLoggedIn(true);
     } else {
       setLoggedIn(false);
+      navigate("/login")
     }
   };
 

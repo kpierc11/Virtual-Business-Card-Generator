@@ -8,7 +8,7 @@ export default function DashboardLayout() {
   const { loggedIn } = useContext(AuthContext);
 
   if (!loggedIn) {
-    return <Navigate to="/login" replace />;
+    return;
   }
 
   return (

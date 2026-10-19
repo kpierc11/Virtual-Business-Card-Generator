@@ -1,11 +1,7 @@
-import { Navigate, Outlet } from "react-router";
+import { Outlet } from "react-router";
 import Footer from "../components/Footer";
-import { AuthContext } from "../context/AuthContext";
-import { useContext } from "react";
 
 export default function AuthLayout() {
-  const { loggedIn } = useContext(AuthContext);
-
   return (
     <>
       <div className="max-lg:collapse bg-base-200 lg:mb-10 shadow-sm w-full rounded-md">
